@@ -1,29 +1,25 @@
-import { ChildProcess } from 'child_process';
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { BaseTransporter } from './BaseTransporter';
 import { Message } from './tools/Message';
 
 /**
- * Creates wrapper around a child process for easy ipc communication
+ * Creates an wrapper around NodeJS.Process to allow easy communication to parent process
  *
  * @export
- * @class ChildTransporter
+ * @class ForkTransporter
  */
-export class ForkTransporter extends BaseTransporter {
+export class Transporter extends BaseTransporter {
 
     private _channel: Observable<Message>;
-    private process: ChildProcess;
 
     /**
-     * Creates an instance of ChildTransporter.
+     * Creates an instance of ForkTransporter.
      *
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
-    public constructor(process: ChildProcess, logger?: any, allowLogging?: boolean) {
-        super(logger, allowLogging);
-
-        this.process = process;
+    public constructor(logger?: any) {
+        super(logger);
 
         this.setup();
     }
@@ -33,37 +29,45 @@ export class ForkTransporter extends BaseTransporter {
      *
      * @param {string} command
      * @returns {Observable}
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     public channel(command: string) {
+        this.log(`Creating command channel. [command: ${command}]`);
         return this._channel
             .pipe(filter((msg) => msg.command === command));
     }
 
     /**
-     * Sends command with payload to child process
+     * Send command to parent process
      *
      * @param {string} command
      * @param {*} data
      * @memberof ForkTransporter
      */
     public emit(command: string, data: any = {}) {
-        this.process.send({
-            command,
-            data,
-        });
+        this.log(`Emitting command. [command: ${command}] [data: ${JSON.stringify(data)}]`);
+        if (process.send) {
+            process.send({
+                command,
+                data,
+            }, (cbData) => {
+                this.log('Callback from emit: ' + cbData);
+            });
+        } else {
+            this.log('Could not emit command. There is no parent process');
+        }
     }
 
     /**
      * Setup command channel
      *
-     * @private
-     * @memberof ChildTransporter
+     * @protected
+     * @memberof ForkTransporter
      */
-    private setup() {
+    protected setup() {
         // Create observable to receive all mesages from parent process
         this._channel = Observable.create((observer: Observer<Message>) => {
-            this.process.on('message', (data) => {
+            process.on('message', (data) => {
                 observer.next(data);
             });
         });
