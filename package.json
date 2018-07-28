@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
+    "clean": "gulp clean",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "coverage:html": "nyc report --reporter=html",
     "lint": "tslint -c tslint.json -t stylish -p .",
@@ -37,7 +38,7 @@
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",
     "del": "^3.0.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "lodash": "^4.17.10",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
