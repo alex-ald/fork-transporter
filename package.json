@@ -11,7 +11,7 @@
     "coverage:html": "nyc report --reporter=html",
     "lint": "tslint -c tslint.json -t stylish -p .",
     "lint:fix": "tslint -c tslint.json -p . --fix",
-    "test": "mocha"
+    "test": "nyc mocha test/**/*.test.ts"
   },
   "nyc": {
     "extension": [
@@ -29,6 +29,7 @@
     "all": true
   },
   "devDependencies": {
+    "@types/chai": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.5.4",
     "chai": "^4.1.2",
@@ -37,6 +38,7 @@
     "gulp": "^3.9.1",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
+    "source-map-support": "^0.5.6",
     "ts-node": "^7.0.0",
     "tslint": "^5.11.0",
     "typescript": "^2.9.2"

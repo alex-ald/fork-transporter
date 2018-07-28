@@ -1,3 +1,4 @@
+import { ChildProcess } from 'child_process';
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { Message } from './tools/Message';
@@ -11,14 +12,14 @@ import { Message } from './tools/Message';
 export class ChildTransporter {
 
     private _channel: Observable<Message>;
-    private process: NodeJS.Process;
+    private process: ChildProcess;
 
     /**
      * Creates an instance of ChildTransporter.
      *
      * @memberof ChildTransporter
      */
-    public constructor(process: NodeJS.Process) {
+    public constructor(process: ChildProcess) {
         this.process = process;
 
         this.setup();

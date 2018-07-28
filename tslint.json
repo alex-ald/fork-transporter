@@ -7,7 +7,7 @@
     "rules": {
         "quotemark": [true, "single"],
         "interface-name": false,
-        "variable-name": [true, "allow-leading-underscore"]
+        "variable-name": [true, "allow-pascal-case", "allow-leading-underscore"]
     },
     "rulesDirectory": []
 }

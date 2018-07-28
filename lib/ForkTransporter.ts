@@ -11,13 +11,17 @@ import { Message } from './tools/Message';
 export class ForkTransporter {
 
     private _channel: Observable<Message>;
+    private logger: any;
 
     /**
      * Creates an instance of ForkTransporter.
      *
      * @memberof ForkTransporter
      */
-    public constructor() {
+    public constructor(logger?: any) {
+        this.logger = logger;
+
+        this.log('Setting up ForkTransporter...');
         this.setup();
     }
 
@@ -25,12 +29,28 @@ export class ForkTransporter {
      * Creates a command channel filtering for a specific command
      *
      * @param {string} command
-     * @returns
+     * @returns {Observable}
      * @memberof ForkTransporter
      */
     public channel(command: string) {
         return this._channel
             .pipe(filter((msg) => msg.command === command));
+    }
+
+    /**
+     * Send command to parent process
+     *
+     * @param {string} command
+     * @param {*} data
+     * @memberof ForkTransporter
+     */
+    public emit(command: string, data?: any) {
+        if (process.send) {
+            process.send({
+                command,
+                data,
+            });
+        }
     }
 
     /**
@@ -50,5 +70,11 @@ export class ForkTransporter {
         // Ensure observable is not recreated for each subscription
         this._channel = this._channel
             .pipe(share());
+    }
+
+    private log(msg: any) {
+        if (this.logger) {
+            this.logger(msg);
+        }
     }
 }
