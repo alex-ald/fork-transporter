@@ -1,3 +1,3 @@
-import { ForkTransporter } from '../../../lib';
+import { Transporter } from '../../../lib';
 
-ForkTransporter.emit('TestCommand');
+Transporter.emit('TestCommand');

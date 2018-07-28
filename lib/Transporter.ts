@@ -1,27 +1,27 @@
-import { ChildProcess } from 'child_process';
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { Message } from './tools/Message';
 
 /**
- * Creates wrapper around a child process for easy ipc communication
+ * Creates an wrapper around NodeJS.Process to allow easy communication to parent process
  *
  * @export
- * @class ChildTransporter
+ * @class ForkTransporter
  */
-export class ChildTransporter {
+export class Transporter {
 
     private _channel: Observable<Message>;
-    private process: ChildProcess;
+    private logger: any;
 
     /**
-     * Creates an instance of ChildTransporter.
+     * Creates an instance of ForkTransporter.
      *
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
-    public constructor(process: ChildProcess) {
-        this.process = process;
+    public constructor(logger?: any) {
+        this.logger = logger;
 
+        this.log('Setting up ForkTransporter...');
         this.setup();
     }
 
@@ -29,8 +29,8 @@ export class ChildTransporter {
      * Creates a command channel filtering for a specific command
      *
      * @param {string} command
-     * @returns
-     * @memberof ChildTransporter
+     * @returns {Observable}
+     * @memberof ForkTransporter
      */
     public channel(command: string) {
         return this._channel
@@ -38,15 +38,31 @@ export class ChildTransporter {
     }
 
     /**
+     * Send command to parent process
+     *
+     * @param {string} command
+     * @param {*} data
+     * @memberof ForkTransporter
+     */
+    public emit(command: string, data?: any) {
+        if (process.send) {
+            process.send({
+                command,
+                data,
+            });
+        }
+    }
+
+    /**
      * Setup command channel
      *
      * @private
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     private setup() {
         // Create observable to receive all mesages from parent process
         this._channel = Observable.create((observer: Observer<Message>) => {
-            this.process.on('message', (data) => {
+            process.on('message', (data) => {
                 observer.next(data);
             });
         });
@@ -54,5 +70,11 @@ export class ChildTransporter {
         // Ensure observable is not recreated for each subscription
         this._channel = this._channel
             .pipe(share());
+    }
+
+    private log(msg: any) {
+        if (this.logger) {
+            this.logger(msg);
+        }
     }
 }

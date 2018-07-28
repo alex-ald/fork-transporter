@@ -2,7 +2,7 @@ import { assert } from 'chai';
 import { ChildProcess, fork } from 'child_process';
 import * as path from 'path';
 import { first } from 'rxjs/operators';
-import { ChildTransporter } from '../lib';
+import { ForkTransporter } from '../lib';
 
 const childLocation = path.resolve(__dirname, 'tools');
 
@@ -19,7 +19,7 @@ describe('Fork Transporter', () => {
     it('Properly send command', (done) => {
         process = fork(childLocation + '/child1/index.js');
 
-        const transporter = new ChildTransporter(process);
+        const transporter = new ForkTransporter(process);
 
         transporter.channel('TestCommand')
             .pipe(first())

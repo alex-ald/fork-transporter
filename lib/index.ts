@@ -1,5 +1,5 @@
-import { ForkTransporter as transporter } from './ForkTransporter';
+import { Transporter as transporter } from './Transporter';
 
-export { ChildTransporter } from './ChildTransporter';
+export { ForkTransporter } from './ForkTransporter';
 
-export const ForkTransporter = new transporter();
+export const Transporter = new transporter();
