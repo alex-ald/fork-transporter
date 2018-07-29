@@ -14,6 +14,22 @@
     "lint:fix": "tslint -c tslint.json -p . --fix",
     "test": "nyc mocha test/**/*.test.ts"
   },
+  "keywords": [
+    "Rx",
+    "RxJS",
+    "Typescript",
+    "Observables",
+    "process",
+    "ipc",
+    "fork",
+    "spawn",
+    "child-process"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alex-ald/fork-transporter.git"
+  },
+  "homepage": "https://github.com/alex-ald/fork-transporter",
   "nyc": {
     "extension": [
       ".ts"
@@ -23,7 +39,8 @@
       "dist/**/*.*",
       "gulpfile.js",
       "coverage",
-      "test"
+      "test",
+      "examples"
     ],
     "reporter": [
       "html"
@@ -49,5 +66,6 @@
   },
   "dependencies": {
     "rxjs": "^6.2.2"
-  }
+  },
+  "typings": "./dist/index.d.ts"
 }
