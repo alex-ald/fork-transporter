@@ -33,7 +33,8 @@ This basic example shows the child process emitting a message to the parent proc
 
 
 import { ForkTransporter } from 'fork-transporter';
-import { fork } from 'child-process';
+import { fork } from 'child_process';
+import { first } from 'rxjs/operators';
 
 const child1 = fork('./Child.js');
 const child1Transporter = new ForkTransporter(child1);
