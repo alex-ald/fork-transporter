@@ -21,6 +21,13 @@ export abstract class BaseTransporter {
 
     public abstract channel(command: string): Observable<Message>;
 
+    protected createMessagePayload(command, data?: any) {
+        return {
+            command,
+            data,
+        };
+    }
+
     protected log(msg: any) {
         if (this.allowLogging && this.logger) {
             this.logger(`${this.Name} : ${msg}`);

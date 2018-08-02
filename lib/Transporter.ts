@@ -46,13 +46,9 @@ export class Transporter extends BaseTransporter {
      */
     public emit(command: string, data: any = {}) {
         this.log(`Emitting command. [command: ${command}] [data: ${JSON.stringify(data)}]`);
+
         if (process.send) {
-            process.send({
-                command,
-                data,
-            }, (cbData) => {
-                this.log('Callback from emit: ' + cbData);
-            });
+            process.send(this.createMessagePayload(command, data));
         } else {
             this.log('Could not emit command. There is no parent process');
         }

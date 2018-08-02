@@ -48,10 +48,7 @@ export class ForkTransporter extends BaseTransporter {
      * @memberof ForkTransporter
      */
     public emit(command: string, data: any = {}) {
-        this.process.send({
-            command,
-            data,
-        });
+        this.process.send(this.createMessagePayload(command, data));
     }
 
     /**
