@@ -2,6 +2,7 @@ import { ChildProcess } from 'child_process';
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { BaseTransporter } from './BaseTransporter';
+import { ChildEvent } from './tools/Events';
 import { Message } from './tools/Message';
 
 /**
@@ -60,8 +61,29 @@ export class ForkTransporter extends BaseTransporter {
     private setup() {
         // Create observable to receive all mesages from parent process
         this._channel = Observable.create((observer: Observer<Message>) => {
+            // Listens for commands sent from child process
             this.process.on('message', (data) => {
                 observer.next(data);
+            });
+
+            // Listens for 'close' events
+            this.process.on('close', (code: number, signal: string) => {
+                observer.next(this.createMessagePayload(ChildEvent.CLOSE, { code, signal }));
+            });
+
+            // Listens for 'disconnect' events
+            this.process.on('disconnect', () => {
+                observer.next(this.createMessagePayload(ChildEvent.DISCONNECT));
+            });
+
+            // Listens for 'error' events
+            this.process.on('error', (err: Error) => {
+                observer.next(this.createMessagePayload(ChildEvent.ERROR, { err }));
+            });
+
+            // Listens for 'exit' events
+            this.process.on('exit', (code: number, signal: string) => {
+                observer.next(this.createMessagePayload(ChildEvent.EXIT, { code, signal }));
             });
         });
 

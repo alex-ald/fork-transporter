@@ -21,7 +21,7 @@ export abstract class BaseTransporter {
 
     public abstract channel(command: string): Observable<Message>;
 
-    protected createMessagePayload(command, data?: any) {
+    protected createMessagePayload(command, data: any = {}) {
         return {
             command,
             data,
