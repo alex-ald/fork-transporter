@@ -1,6 +1,7 @@
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { BaseTransporter } from './BaseTransporter';
+import { ParentEvent } from './tools/Events';
 import { Message } from './tools/Message';
 
 /**
@@ -66,6 +67,42 @@ export class Transporter extends BaseTransporter {
             process.on('message', (data) => {
                 observer.next(data);
             });
+
+            // Listens for 'beforeExit' events
+            process.on('beforeExit', () => {
+                observer.next(this.createMessagePayload(ParentEvent.BEFORE_EXIT));
+            });
+
+            // Listens for 'disconnect' events
+            process.on('disconnect', () => {
+                observer.next(this.createMessagePayload(ParentEvent.DISCONNECT));
+            });
+
+            // Listens for 'exit' events
+            process.on('exit', (code: number) => {
+                observer.next(this.createMessagePayload(ParentEvent.EXIT, { code }));
+            });
+
+            // Listens for 'warning' events
+            process.on('warning', (warning: Error) => {
+                observer.next(this.createMessagePayload(ParentEvent.WARNING, { warning }));
+            });
+
+            // Listens for 'rejectionHandled' events
+            process.on('rejectionHandled', (promise: Promise<any>) => {
+                observer.next(this.createMessagePayload(ParentEvent.REJECTION_HANDLED, { }));
+            });
+
+            // Listens for 'unhandledRejection' events
+            process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+                observer.next(this.createMessagePayload(ParentEvent.UNHANDLED_REJECTION, { reason, promise }));
+            });
+
+            // Listens for 'uncaughtException' events
+            process.on('uncaughtException', (error: Error) => {
+                observer.next(this.createMessagePayload(ParentEvent.UNCAUGHT_EXCEPTION, { error }));
+            });
+
         });
 
         // Ensure observable is not recreated for each subscription
