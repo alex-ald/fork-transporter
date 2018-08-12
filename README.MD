@@ -77,7 +77,7 @@ import { ForkTransporter } from 'fork-transporter';
 #### Constructor
 
 ```typescript
-const childTransporter = new ForkTransporter(childProcess);
+const forkTransporter = new ForkTransporter(childProcess);
 ```
 
 Instantiate a ForkTransporter class by passing in a child process that you want to create a transporter for.
@@ -85,7 +85,7 @@ Instantiate a ForkTransporter class by passing in a child process that you want 
 ### Emit
 
 ```typescript
-childTransporter.emit('command', {
+forkTransporter.emit('command', {
     ...
 })
 ```
@@ -95,13 +95,13 @@ Emits a message to the child process. First parameter is the command and the sec
 ### Channel
 
 ```typescript
-const commandChannel = childTransporter.channel('command');
+const commandChannel = forkTransporter.channel('command');
 ```
 
 Channel method exposes an RxJS Observable which filters for the command specified. At this point, you can alter the Observable just like how you would normally.
 
 ```typescript
-const channelSubscription = childTransporter.channel('command')
+const channelSubscription = forkTransporter.channel('command')
     .subscribe(({ command, data }) => {
         ...
     });

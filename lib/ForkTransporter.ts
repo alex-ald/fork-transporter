@@ -2,13 +2,14 @@ import { ChildProcess } from 'child_process';
 import { Observable, Observer } from 'rxjs';
 import { filter, share } from 'rxjs/operators';
 import { BaseTransporter } from './BaseTransporter';
+import { ChildEvent } from './tools/Events';
 import { Message } from './tools/Message';
 
 /**
  * Creates wrapper around a child process for easy ipc communication
  *
  * @export
- * @class ChildTransporter
+ * @class ForkTransporter
  */
 export class ForkTransporter extends BaseTransporter {
 
@@ -16,9 +17,9 @@ export class ForkTransporter extends BaseTransporter {
     private process: ChildProcess;
 
     /**
-     * Creates an instance of ChildTransporter.
+     * Creates an instance of ForkTransporter.
      *
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     public constructor(process: ChildProcess, logger?: any, allowLogging?: boolean) {
         super(logger, allowLogging);
@@ -33,7 +34,7 @@ export class ForkTransporter extends BaseTransporter {
      *
      * @param {string} command
      * @returns {Observable}
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     public channel(command: string) {
         return this._channel
@@ -48,23 +49,49 @@ export class ForkTransporter extends BaseTransporter {
      * @memberof ForkTransporter
      */
     public emit(command: string, data: any = {}) {
-        this.process.send({
-            command,
-            data,
-        });
+        this.process.send(this.createMessagePayload(command, data));
     }
 
     /**
      * Setup command channel
      *
      * @private
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     private setup() {
         // Create observable to receive all mesages from parent process
         this._channel = Observable.create((observer: Observer<Message>) => {
+            // Listens for commands sent from child process
             this.process.on('message', (data) => {
                 observer.next(data);
+            });
+
+            // Listens for 'close' events
+            this.process.on('close', (code: number, signal: string) => {
+                observer.next(this.createMessagePayload(ChildEvent.CLOSE, {
+                    code,
+                    signal,
+                }));
+            });
+
+            // Listens for 'disconnect' events
+            this.process.on('disconnect', () => {
+                observer.next(this.createMessagePayload(ChildEvent.DISCONNECT));
+            });
+
+            // Listens for 'error' events
+            this.process.on('error', (error: Error) => {
+                observer.next(this.createMessagePayload(ChildEvent.ERROR, {
+                    error,
+                }));
+            });
+
+            // Listens for 'exit' events
+            this.process.on('exit', (code: number, signal: string) => {
+                observer.next(this.createMessagePayload(ChildEvent.EXIT, {
+                    code,
+                    signal,
+                }));
             });
         });
 
