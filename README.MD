@@ -68,16 +68,16 @@ Transporter.emit('test-command', {
 
 fork-transporter exposes 2 classes - for parent and child processes
 
-### Parent process api
+## Parent process api
 
 ```typescript
 import { ForkTransporter } from 'fork-transporter';
 ```
 
-#### Constructor
+### Constructor
 
 ```typescript
-const childTransporter = new ForkTransporter(childProcess);
+const forkTransporter = new ForkTransporter(childProcess);
 ```
 
 Instantiate a ForkTransporter class by passing in a child process that you want to create a transporter for.
@@ -85,7 +85,7 @@ Instantiate a ForkTransporter class by passing in a child process that you want 
 ### Emit
 
 ```typescript
-childTransporter.emit('command', {
+forkTransporter.emit('command', {
     ...
 })
 ```
@@ -95,13 +95,13 @@ Emits a message to the child process. First parameter is the command and the sec
 ### Channel
 
 ```typescript
-const commandChannel = childTransporter.channel('command');
+const commandChannel = forkTransporter.channel('command');
 ```
 
 Channel method exposes an RxJS Observable which filters for the command specified. At this point, you can alter the Observable just like how you would normally.
 
 ```typescript
-const channelSubscription = childTransporter.channel('command')
+const channelSubscription = forkTransporter.channel('command')
     .subscribe(({ command, data }) => {
         ...
     });
@@ -113,7 +113,22 @@ To add a callback on the command channel, simply call the subscribe method since
 
 **NOTE:** Be sure to unsubscribe to all unwanted to subscriptions. Unneccessary subscriptions may cause memory leaks.
 
-### Child process api
+### Default Events
+
+ChildProcess provides a number of default [events](https://nodejs.org/api/child_process.html#child_process_class_childprocess). These events are already being listened to so you can listen to these by creating a channel for them.
+
+Available default events:
+- exit
+    - payload: *(code: number, signal: string)*
+- close
+    - payload: *(code: number, signal: string)*
+- disconnect
+    - payload: *()*
+- error
+    - payload: *(error: Error)*
+
+
+## Child process api
 
 ```typescript
 import { Transporter } from 'fork-transporter';
@@ -149,3 +164,23 @@ channelSubscription.unsubscribe();
 To add a callback on the command channel, simply call the subscribe method since it is an ordinary RxJS Observable. 
 
 **NOTE:** Be sure to unsubscribe to all unwanted to subscriptions. Unneccessary subscriptions may cause memory leaks.
+
+### Default Events
+
+NodeJS.Process provides a number of default [events](https://nodejs.org/api/process.html#process_process_events). These events are already being listened to so you can listen to these by creating a channel for them.
+
+Available default events:
+- exit 
+    - payload: *(code: number)*
+- disconnect
+    - payload: *()*
+- warning
+    - payload: *(warning: Error)*
+- rejectionHandled
+    - payload: *(promise: Promise)*
+- unhandledRejection
+    - payload: *(reason: any, promise: Promise)*
+- uncaughtException
+    - payload: *(error: Error)*
+
+**Note:** Event "beforeExit" could not be added because it is only emitted when the node process exits if no work is scheduled but the Observable created in Transporter prevents this behavior.
