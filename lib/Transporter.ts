@@ -89,18 +89,25 @@ export class Transporter extends BaseTransporter {
             });
 
             // Listens for 'rejectionHandled' events
-            process.on('rejectionHandled', (promise: Promise<any>) => {
-                observer.next(this.createMessagePayload(ParentEvent.REJECTION_HANDLED, { }));
-            });
+            // TODO: Find out why a promise object will not go through the observable
+            // process.on('rejectionHandled', (promise: Promise<any>) => {
+            //     observer.next(this.createMessagePayload(ParentEvent.REJECTION_HANDLED, { promise }));
+            // });
 
             // Listens for 'unhandledRejection' events
-            process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
-                observer.next(this.createMessagePayload(ParentEvent.UNHANDLED_REJECTION, { reason, promise }));
-            });
+            // TODO: Find out why a promise object will not go through the observable
+            // process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+            //     observer.next(this.createMessagePayload(ParentEvent.UNHANDLED_REJECTION, {
+            //         promise,
+            //         reason: JSON.stringify(reason, Object.getOwnPropertyNames(reason)),
+            //     }));
+            // });
 
             // Listens for 'uncaughtException' events
             process.on('uncaughtException', (error: Error) => {
-                observer.next(this.createMessagePayload(ParentEvent.UNCAUGHT_EXCEPTION, { error }));
+                observer.next(this.createMessagePayload(ParentEvent.UNCAUGHT_EXCEPTION, {
+                    error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+                }));
             });
 
         });

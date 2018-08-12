@@ -77,8 +77,8 @@ export class ForkTransporter extends BaseTransporter {
             });
 
             // Listens for 'error' events
-            this.process.on('error', (err: Error) => {
-                observer.next(this.createMessagePayload(ChildEvent.ERROR, { err }));
+            this.process.on('error', (error: Error) => {
+                observer.next(this.createMessagePayload(ChildEvent.ERROR, { error }));
             });
 
             // Listens for 'exit' events
