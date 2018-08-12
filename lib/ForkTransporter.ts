@@ -9,7 +9,7 @@ import { Message } from './tools/Message';
  * Creates wrapper around a child process for easy ipc communication
  *
  * @export
- * @class ChildTransporter
+ * @class ForkTransporter
  */
 export class ForkTransporter extends BaseTransporter {
 
@@ -17,9 +17,9 @@ export class ForkTransporter extends BaseTransporter {
     private process: ChildProcess;
 
     /**
-     * Creates an instance of ChildTransporter.
+     * Creates an instance of ForkTransporter.
      *
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     public constructor(process: ChildProcess, logger?: any, allowLogging?: boolean) {
         super(logger, allowLogging);
@@ -34,7 +34,7 @@ export class ForkTransporter extends BaseTransporter {
      *
      * @param {string} command
      * @returns {Observable}
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     public channel(command: string) {
         return this._channel
@@ -56,7 +56,7 @@ export class ForkTransporter extends BaseTransporter {
      * Setup command channel
      *
      * @private
-     * @memberof ChildTransporter
+     * @memberof ForkTransporter
      */
     private setup() {
         // Create observable to receive all mesages from parent process

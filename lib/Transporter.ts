@@ -8,16 +8,16 @@ import { Message } from './tools/Message';
  * Creates an wrapper around NodeJS.Process to allow easy communication to parent process
  *
  * @export
- * @class ForkTransporter
+ * @class Transporter
  */
 export class Transporter extends BaseTransporter {
 
     private _channel: Observable<Message>;
 
     /**
-     * Creates an instance of ForkTransporter.
+     * Creates an instance of Transporter.
      *
-     * @memberof ForkTransporter
+     * @memberof Transporter
      */
     public constructor(logger?: any) {
         super(logger);
@@ -30,7 +30,7 @@ export class Transporter extends BaseTransporter {
      *
      * @param {string} command
      * @returns {Observable}
-     * @memberof ForkTransporter
+     * @memberof Transporter
      */
     public channel(command: string) {
         this.log(`Creating command channel. [command: ${command}]`);
@@ -43,7 +43,7 @@ export class Transporter extends BaseTransporter {
      *
      * @param {string} command
      * @param {*} data
-     * @memberof ForkTransporter
+     * @memberof Transporter
      */
     public emit(command: string, data: any = {}) {
         this.log(`Emitting command. [command: ${command}] [data: ${JSON.stringify(data)}]`);
@@ -59,7 +59,7 @@ export class Transporter extends BaseTransporter {
      * Setup command channel
      *
      * @protected
-     * @memberof ForkTransporter
+     * @memberof Transporter
      */
     protected setup() {
         // Create observable to receive all mesages from parent process
@@ -69,8 +69,10 @@ export class Transporter extends BaseTransporter {
             });
 
             // Listens for 'beforeExit' events
-            process.on('beforeExit', () => {
-                observer.next(this.createMessagePayload(ParentEvent.BEFORE_EXIT));
+            process.on('beforeExit', (code: number) => {
+                observer.next(this.createMessagePayload(ParentEvent.BEFORE_EXIT, {
+                    code,
+                }));
             });
 
             // Listens for 'disconnect' events
