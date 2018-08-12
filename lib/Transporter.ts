@@ -80,33 +80,37 @@ export class Transporter extends BaseTransporter {
 
             // Listens for 'exit' events
             process.on('exit', (code: number) => {
-                observer.next(this.createMessagePayload(ParentEvent.EXIT, { code }));
+                observer.next(this.createMessagePayload(ParentEvent.EXIT, {
+                    code,
+                }));
             });
 
             // Listens for 'warning' events
             process.on('warning', (warning: Error) => {
-                observer.next(this.createMessagePayload(ParentEvent.WARNING, { warning }));
+                observer.next(this.createMessagePayload(ParentEvent.WARNING, {
+                    warning,
+                }));
             });
 
             // Listens for 'rejectionHandled' events
-            // TODO: Find out why a promise object will not go through the observable
-            // process.on('rejectionHandled', (promise: Promise<any>) => {
-            //     observer.next(this.createMessagePayload(ParentEvent.REJECTION_HANDLED, { promise }));
-            // });
+            process.on('rejectionHandled', (promise: Promise<any>) => {
+                observer.next(this.createMessagePayload(ParentEvent.REJECTION_HANDLED, {
+                    promise,
+                }));
+            });
 
             // Listens for 'unhandledRejection' events
-            // TODO: Find out why a promise object will not go through the observable
-            // process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
-            //     observer.next(this.createMessagePayload(ParentEvent.UNHANDLED_REJECTION, {
-            //         promise,
-            //         reason: JSON.stringify(reason, Object.getOwnPropertyNames(reason)),
-            //     }));
-            // });
+            process.on('unhandledRejection', (reason: any, promise: Promise<any>) => {
+                observer.next(this.createMessagePayload(ParentEvent.UNHANDLED_REJECTION, {
+                    promise,
+                    reason,
+                }));
+            });
 
             // Listens for 'uncaughtException' events
             process.on('uncaughtException', (error: Error) => {
                 observer.next(this.createMessagePayload(ParentEvent.UNCAUGHT_EXCEPTION, {
-                    error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+                    error,
                 }));
             });
 

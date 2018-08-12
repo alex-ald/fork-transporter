@@ -40,7 +40,7 @@ if (process.env.TEST === '3') {
     process.emitWarning('Test 3 warning');
 }
 
-if (process.env.TEST === '0') {
+if (process.env.TEST === '4') {
     Transporter.channel('unhandledRejection')
     .pipe(first())
     .subscribe(({ data }) => {
@@ -50,6 +50,31 @@ if (process.env.TEST === '0') {
     });
 
     const testPromise = new Promise((resolve, reject) => {
-        throw new Error('Test error');
+        throw new Error('Test 4 error');
+    });
+}
+
+if (process.env.TEST === '5') {
+    Transporter.channel('rejectionHandled')
+    .pipe(first())
+    .subscribe(({ data }) => {
+        console.log('rejectionHandled received...');
+        console.log('data: ', JSON.stringify(data));
+        Transporter.emit('ran', data);
+    });
+
+    Transporter.channel('unhandledRejection')
+    .pipe(first())
+    .subscribe(({ data }) => {
+        console.log('unhandledRejection received...');
+
+        data.promise
+            .catch((err) => {
+                console.log('error: ', err);
+            });
+    });
+
+    const testPromise = new Promise((resolve, reject) => {
+        reject('Test rejection.');
     });
 }

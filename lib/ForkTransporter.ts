@@ -68,7 +68,10 @@ export class ForkTransporter extends BaseTransporter {
 
             // Listens for 'close' events
             this.process.on('close', (code: number, signal: string) => {
-                observer.next(this.createMessagePayload(ChildEvent.CLOSE, { code, signal }));
+                observer.next(this.createMessagePayload(ChildEvent.CLOSE, {
+                    code,
+                    signal,
+                }));
             });
 
             // Listens for 'disconnect' events
@@ -78,12 +81,17 @@ export class ForkTransporter extends BaseTransporter {
 
             // Listens for 'error' events
             this.process.on('error', (error: Error) => {
-                observer.next(this.createMessagePayload(ChildEvent.ERROR, { error }));
+                observer.next(this.createMessagePayload(ChildEvent.ERROR, {
+                    error,
+                }));
             });
 
             // Listens for 'exit' events
             this.process.on('exit', (code: number, signal: string) => {
-                observer.next(this.createMessagePayload(ChildEvent.EXIT, { code, signal }));
+                observer.next(this.createMessagePayload(ChildEvent.EXIT, {
+                    code,
+                    signal,
+                }));
             });
         });
 

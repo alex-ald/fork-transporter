@@ -91,22 +91,39 @@ describe('Transporter', () => {
                 });
         });
 
-        // it('unhandledRejection', (done) => {
-        //     childProcess = fork(childLocation + '/child4', [], {
-        //         env: {
-        //             TEST: '3',
-        //         },
-        //     });
+        it('unhandledRejection', (done) => {
+            childProcess = fork(childLocation + '/child4', [], {
+                env: {
+                    TEST: '4',
+                },
+            });
 
-        //     const transporter = new ForkTransporter(childProcess);
+            const transporter = new ForkTransporter(childProcess);
 
-        //     transporter.channel('ran')
-        //         .pipe(first())
-        //         .subscribe(({ data }) => {
-        //             assert.ok(data.reason, 'reason does not exist in data');
-        //             assert.ok(data.promise, 'promise does not exist in data');
-        //             done();
-        //         });
-        // });
+            transporter.channel('ran')
+                .pipe(first())
+                .subscribe(({ data }) => {
+                    assert.ok(data.reason, 'reason does not exist in data');
+                    assert.ok(data.promise, 'promise does not exist in data');
+                    done();
+                });
+        });
+
+        it('rejectionHandled', (done) => {
+            childProcess = fork(childLocation + '/child4', [], {
+                env: {
+                    TEST: '5',
+                },
+            });
+
+            const transporter = new ForkTransporter(childProcess);
+
+            transporter.channel('ran')
+                .pipe(first())
+                .subscribe(({ data }) => {
+                    assert.ok(data.promise, 'promise does not exist in data');
+                    done();
+                });
+        });
     });
 });
