@@ -68,12 +68,15 @@ export class Transporter extends BaseTransporter {
                 observer.next(data);
             });
 
+            // TODO: Find out why the Observable prevents the process
+            //  from exitting when no work is scheduled
             // Listens for 'beforeExit' events
-            process.on('beforeExit', (code: number) => {
-                observer.next(this.createMessagePayload(ParentEvent.BEFORE_EXIT, {
-                    code,
-                }));
-            });
+            // process.on('beforeExit', (code: number) => {
+            //     console.log('TESTING!!!');
+            //     observer.next(this.createMessagePayload(ParentEvent.BEFORE_EXIT, {
+            //         code,
+            //     }));
+            // });
 
             // Listens for 'disconnect' events
             process.on('disconnect', () => {

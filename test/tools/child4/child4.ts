@@ -78,3 +78,16 @@ if (process.env.TEST === '5') {
         reject('Test rejection.');
     });
 }
+
+if (process.env.TEST === '6') {
+    Transporter.channel('beforeExit')
+        .pipe(first())
+        .subscribe(({ data }) => {
+            console.log('beforeExit received...');
+            Transporter.emit('ran', data);
+        });
+
+    process.on('beforeExit', () => {
+        console.log('IN EVENT EMITTER');
+    });
+}

@@ -125,5 +125,28 @@ describe('Transporter', () => {
                     done();
                 });
         });
+
+        // TODO: Uncomment when beforeExit event is working
+        // it('beforeExit', (done) => {
+        //     childProcess = fork(childLocation + '/child4', [], {
+        //         env: {
+        //             TEST: '6',
+        //         },
+        //     });
+
+        //     const transporter = new ForkTransporter(childProcess);
+
+        //     transporter.channel('ran')
+        //         .pipe(first())
+        //         .subscribe(() => {
+        //             done();
+        //         });
+
+        //     transporter.channel('exit')
+        //         .pipe(first())
+        //         .subscribe(() => {
+        //             console.log('child process is exited.');
+        //         });
+        // });
     });
 });
