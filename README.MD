@@ -68,13 +68,13 @@ Transporter.emit('test-command', {
 
 fork-transporter exposes 2 classes - for parent and child processes
 
-### Parent process api
+## Parent process api
 
 ```typescript
 import { ForkTransporter } from 'fork-transporter';
 ```
 
-#### Constructor
+### Constructor
 
 ```typescript
 const forkTransporter = new ForkTransporter(childProcess);
@@ -113,7 +113,22 @@ To add a callback on the command channel, simply call the subscribe method since
 
 **NOTE:** Be sure to unsubscribe to all unwanted to subscriptions. Unneccessary subscriptions may cause memory leaks.
 
-### Child process api
+### Default Events
+
+ChildProcess provides a number of default [events](https://nodejs.org/api/child_process.html#child_process_class_childprocess). These events are already being listened to so you can listen to these by creating a channel for them.
+
+Available default events:
+- exit
+    - payload: *(code: number, signal: string)*
+- close
+    - payload: *(code: number, signal: string)*
+- disconnect
+    - payload: *()*
+- error
+    - payload: *(error: Error)*
+
+
+## Child process api
 
 ```typescript
 import { Transporter } from 'fork-transporter';
@@ -149,3 +164,23 @@ channelSubscription.unsubscribe();
 To add a callback on the command channel, simply call the subscribe method since it is an ordinary RxJS Observable. 
 
 **NOTE:** Be sure to unsubscribe to all unwanted to subscriptions. Unneccessary subscriptions may cause memory leaks.
+
+### Default Events
+
+NodeJS.Process provides a number of default [events](https://nodejs.org/api/process.html#process_process_events). These events are already being listened to so you can listen to these by creating a channel for them.
+
+Available default events:
+- exit 
+    - payload: *(code: number)*
+- disconnect
+    - payload: *()*
+- warning
+    - payload: *(warning: Error)*
+- rejectionHandled
+    - payload: *(promise: Promise)*
+- unhandledRejection
+    - payload: *(reason: any, promise: Promise)*
+- uncaughtException
+    - payload: *(error: Error)*
+
+**Note:** Event "beforeExit" could not be added because it is only emitted when the node process exits if no work is scheduled but the Observable created in Transporter prevents this behavior.
