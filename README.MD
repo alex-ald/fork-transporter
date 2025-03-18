@@ -1,4 +1,7 @@
-# fork-transporter
+# [DEPRECATED] fork-transporter
+
+This is no longer supported.
+
 [![Build Status](https://travis-ci.com/alex-ald/fork-transporter.svg?branch=master)](https://travis-ci.com/alex-ald/fork-transporter)
 [![Coverage Status](https://coveralls.io/repos/github/alex-ald/fork-transporter/badge.svg)](https://coveralls.io/github/alex-ald/fork-transporter)
 
